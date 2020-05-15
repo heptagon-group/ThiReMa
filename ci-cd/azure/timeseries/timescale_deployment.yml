@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timescale
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timescale
+  template:
+    metadata:
+      name: timescale
+      labels:
+        app: timescale
+    spec:
+      containers:
+        - image: timescale/timescaledb
+          name: timescale
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-pwd
+                  key: password
+            - name: POSTGRES_USER
+              value: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+           #  This name must match the volumes.name below.
+            - name: azurevol
+              #mountPath: /var/lib/postgresql/data
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+      volumes:
+        - name: azurevol
+          azureDisk:
+            kind: Managed
+            diskName: sqlDisk
+            diskURI: /subscriptions/cc947633-abcb-48b6-82de-8fc745d2366b/resourceGroups/MC_my-resource-group_ThiReMa_eastus/providers/Microsoft.Compute/disks/sqlDisk
+        #- name: azurevol
+        #  azureFile:
+        #    secretName: azure-secret-vol
+        #    shareName: aksshare
+        #    readOnly: false
+

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      hostname: backend
+      imagePullSecrets:
+      - name: azregistry
+      containers:
+        - name: backend
+          image: ThiReMaRegistry2.azurecr.io/backend
+          env:
+            - name: DBURL
+              value: timescale-service
+            - name: KAFKA_URL
+              value: kafka
+            - name: REGISTRYURL
+              value: schema-registry-service
+            - name: DATAPROCESSORURL 
+              value: 104.45.190.39/data-processor
+            - name: THIREMA_BOT_TOKEN
+              value: 1236104388:AAFoM5HJiybyKdZab5mpe4Z7dlnamS80Mps
+          imagePullPolicy: Always #IfNotPresent
+          command:
+          - /home/backend_entrypoint.sh
+          ports:
+            - containerPort: 1234 # hookServer port
+            - containerPort: 8080 # frontend-controller access
+            - containerPort: 8090 # data-processor access
+          volumeMounts:
+           #  This name must match the volumes.name below.
+            - name: azurevol
+              mountPath: /root/.m2/repository
+              subPath: maven
+      volumes:
+        - name: azurevol
+          azureDisk:
+            kind: Managed
+            diskName: mavenDisk
+            diskURI: /subscriptions/cc947633-abcb-48b6-82de-8fc745d2366b/resourceGroups/MC_my-resource-group_ThiReMa_eastus/providers/Microsoft.Compute/disks/mavenDisk
+

@@ -1,0 +1,44 @@
+# https://kubernetes.github.io/ingress-nginx/examples/rewrite/
+# https://kubernetes.github.io/ingress-nginx/user-guide/tls/
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubernetes-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  tls:
+  - secretName: tls-secret
+  rules:
+  - http:
+      paths:
+      # backend
+      - path: /backend(/|$)(.*)
+        backend:
+          serviceName: backend-service
+          servicePort: 8080
+      - path: /refreshBackend(/|$)(.*)
+        backend: 
+          serviceName: backendhook-service
+          servicePort: 1234
+      - path: /data-processor(/|$)(.*)
+        backend:
+          serviceName: data-processor-service
+          servicePort: 8090
+
+      # frontend
+      - path: /frontend(/|$)(.*)
+        backend:
+          serviceName: frontend-service
+          servicePort: 3000
+      - path: /refreshFrontend(/|$)(.*)
+        backend: 
+          serviceName: frontendhook-service
+          servicePort: 1234
+
+      # confluent
+      - path: /schema-registry(/|$)(.*)
+        backend:
+          serviceName: schema-registry-service
+          servicePort: 8081

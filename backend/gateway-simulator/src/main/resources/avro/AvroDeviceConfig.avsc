@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "namespace": "com.heptagon.thirema.dataprocessor.kafka.gateway.avro",
+  "name": "AvroDeviceConfig",
+  "fields": [
+    { "name": "ipAddress", "type": "string" },
+    { "name": "frequency", "type": "int" },
+    { "name": "enabled", "type": "boolean" }
+  ]
+}

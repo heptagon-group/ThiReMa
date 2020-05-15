@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: confluent-cli-service
+spec:
+  ports:
+  - port: 9021
+    targetPort: 9021
+    protocol: TCP
+  selector:
+    app: kafka

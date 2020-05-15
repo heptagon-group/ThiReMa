@@ -1,0 +1,18 @@
+{
+  "type": "record",
+  "namespace": "com.heptagon.thirema.dataprocessor.kafka.gateway.avro",
+  "name": "AvroDeviceData",
+  "fields": [
+    { "name": "ipAddress", "type": "string" },
+    { "name": "measures", "type": {
+      "type": "array", "items": {
+        "type": "record",
+        "name": "AvroMeasureData",
+        "fields": [
+          { "name": "name", "type": "string" },
+          { "name": "value", "type": "double"}
+        ]
+      }
+    }}
+  ]
+}

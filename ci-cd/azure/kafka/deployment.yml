@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      hostname: kafka
+      imagePullSecrets:
+      - name: azregistry
+      containers:
+        - name: kafka
+          image: ThiReMaRegistry2.azurecr.io/kafka
+          imagePullPolicy: Always #IfNotPresent
+          env:
+          - name: CONFLUENT_HOME
+            value: /home/confluent
+          command: 
+          - /home/confluent/init.sh
+          ports:
+            - containerPort: 9092 # kafka access
+            - containerPort: 8081 # avro registry
+            - containerPort: 9021 # confluent CLI access\

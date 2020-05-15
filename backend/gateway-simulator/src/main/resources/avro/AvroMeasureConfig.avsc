@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "namespace": "com.heptagon.thirema.dataprocessor.kafka.gateway.avro",
+  "name": "AvroMeasureConfig",
+  "fields": [
+    { "name": "ipAddress", "type": "string" },
+    { "name": "name", "type": "string" },
+    { "name": "enabled", "type": "boolean" }
+  ]
+}

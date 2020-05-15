@@ -1,0 +1,47 @@
+# https://blog.container-solutions.com/pet-cattle-running-sonar-kubernetes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarqube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+    spec:
+      hostname: sonarqube
+      containers:
+        - name: sonarqube
+          image: sonarqube
+          command:
+          - /bin/sh
+          - -c
+          - sleep 100
+          args:
+            - -Dsonar.web.context=/sonarqube
+          #env:
+          #  - name: SONARQUBE_JDBC_PASSWORD
+          #    valueFrom:
+          #      secretKeyRef:
+          #        name: postgres-pwd
+          #        key: password
+          #  - name: SONARQUBE_JDBC_URL
+          #    value: jdbc:postgresql://timescale-service:5432/sonarqube
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+          volumeMounts:
+           #  This name must match the volumes.name below.
+            - name: azurevol
+              mountPath: /opt/sonarqube/data
+              subPath: data
+      volumes:
+        - name: azurevol
+          azureDisk:
+            kind: Managed
+            diskName: sonarqubeVol
+            diskURI: /subscriptions/45f6afad-548e-4372-9aed-779449db0816/resourceGroups/MC_my_resources_group_ThiReMa_southcentralus/providers/Microsoft.Compute/disks/sonarqubeVol

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      hostname: frontend
+      imagePullSecrets:
+      - name: azregistry
+      containers:
+        - name: frontend
+          image: ThiReMaRegistry2.azurecr.io/backend # same image as backend
+          imagePullPolicy: Always
+          env:
+            - name: REACT_APP_FRONTEND_URL
+              value: http://104.45.190.39/frontend
+            - name: REACT_APP_BACKEND_URL
+              value: http://104.45.190.39/backend
+          command:
+          - /home/frontend_entrypoint.sh
+          ports:
+            - containerPort: 1234 # hookServer port
+            - containerPort: 3000 # frontend access
+          volumeMounts:
+           #  This name must match the volumes.name below.
+            - name: azurevol
+              mountPath: /vol/
+              subPath: js
+      volumes:
+        - name: azurevol
+          azureDisk:
+            kind: Managed
+            diskName: jsDisk
+            diskURI: /subscriptions/cc947633-abcb-48b6-82de-8fc745d2366b/resourceGroups/MC_my-resource-group_ThiReMa_eastus/providers/Microsoft.Compute/disks/jsDisk
+
+
+
